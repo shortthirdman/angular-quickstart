@@ -1,6 +1,7 @@
 export const ASSETS_MOCK = window.location.origin + window.location.pathname + '/assets/mock/';
 
 export interface TransformedAssetConfig {
+  episode: number;
   title: string;
   description: string;
 }

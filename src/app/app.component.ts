@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
 
   episodes: AssetConfig[] = [];
   transformedAssets: TransformedAssetConfig[] = [];
-  tempEpArray: AssetConfig[] = [];
+  private tempEpArray: TransformedAssetConfig[] = [];
 
   constructor(private appService: AppService) { }
 
@@ -32,24 +32,24 @@ export class AppComponent implements OnInit {
       this.appService.getAssetsConfig(i.toString()).subscribe(
         (response: HttpResponse<ResponseConfig>) => {
           this.episodes = response.body.assets;
+          this.transformObject();
         },
         (error: any) => {
           console.error(error);
         },
         () => {
-          this.transformObject();
         }
       );
     }
   }
 
   private transformObject() {
-    this.tempEpArray = _.orderBy(this.episodes, ["episode"], ["asc"]);
-    for (const episode of this.tempEpArray) {
-      const tempEpisode = { title: episode.title, description: episode.shortDesc };
+    for (const episode of this.episodes) {
+      const tempEpisode: TransformedAssetConfig = { episode: _.toInteger(episode.episode), title: episode.title, description: episode.shortDesc };
       const obj = Object.assign(tempEpisode);
-      this.transformedAssets.push(obj);
+      this.tempEpArray.push(obj);
     }
-    this.divElement.nativeElement.innerText = JSON.stringify(this.transformedAssets, null, 4);
+    this.transformedAssets = _.orderBy(this.tempEpArray, ["episode"], ["asc"]);
+    this.divElement.nativeElement.innerText = JSON.stringify(this.transformedAssets, null, 8);
   }
 }
